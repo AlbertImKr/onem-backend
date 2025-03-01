@@ -5,20 +5,28 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.untilAsserted
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
+import org.springframework.test.web.reactive.server.WebTestClient
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UrlShortenControllerAsyncTest {
+@AutoConfigureWebTestClient
+class UrlShortenControllerIntegrationTest {
 
     @Autowired
-    lateinit var restTemplate: TestRestTemplate
+    private lateinit var webTestClient: WebTestClient
+
+    @Autowired
+    private lateinit var shortenedUrlRepository: ShortenedUrlRepository
+
+    @BeforeEach
+    fun setUp() {
+        shortenedUrlRepository.deleteAll()
+    }
 
     @ParameterizedTest
     @CsvSource("50", "500", "10000")
@@ -34,8 +42,13 @@ class UrlShortenControllerAsyncTest {
     }
 
     private fun createUrl(originUrl: String): String? {
-        val headers = HttpHeaders().apply { contentType = MediaType.APPLICATION_JSON }
-        val request = HttpEntity(originUrl, headers)
-        return restTemplate.postForEntity("/shorten-url/create", request, String::class.java).body
+        return webTestClient.post()
+            .uri("/shorten-url/create")
+            .bodyValue(originUrl)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(String::class.java)
+            .returnResult()
+            .responseBody
     }
 }
