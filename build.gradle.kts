@@ -9,6 +9,7 @@ group = "community.whatever"
 version = "0.0.1-SNAPSHOT"
 val coroutinesVersion = "1.10.1"
 val awaitilityVersion = "4.2.0"
+val mockkVersion = "1.13.17"
 
 java {
     toolchain {
@@ -31,6 +32,10 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
     // awaitility은 비동기 코드를 테스트하기 위한 라이브러리입니다.
     testImplementation("org.awaitility:awaitility-kotlin:$awaitilityVersion")
+    // mockk는 목 객체를 생성하기 위한 라이브러리입니다.
+    testImplementation("io.mockk:mockk:$mockkVersion")
+    // webTestClient를 사용하기 위해 webflux를 추가합니다.
+    testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
