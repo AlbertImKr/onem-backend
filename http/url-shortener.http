@@ -1,0 +1,11 @@
+### Origin URL 저장
+POST {{baseUrl}}/shorten-url/create
+Content-Type: text/plain
+
+https://www.naver.com
+
+### 짧은 키워드로 Origin URL 조회
+POST {{baseUrl}}/shorten-url/search
+Content-Type: text/plain
+
+1
