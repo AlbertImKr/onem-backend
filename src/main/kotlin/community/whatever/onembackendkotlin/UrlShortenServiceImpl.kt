@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 @Service
 class UrlShortenServiceImpl(private val shortenedUrlRepository: ShortenedUrlRepository) : UrlShortenService {
     override fun getOriginUrl(request: ShortenUrlSearchRequest): OriginUrlResponse {
-        val id = request.key
+        val id = request.shortenUrl
         return OriginUrlResponse(shortenedUrlRepository.findById(id)?.originUrl ?: throw UrlNotFoundException())
     }
 
