@@ -40,10 +40,10 @@ class UrlShortenServiceImplTest {
             every { shortenedUrlRepository.save(shortenedUrl) } returns savedShortenedUrl
 
             // when
-            val result = urlShortenService.saveShortenUrl(originUrl)
+            val result = urlShortenService.saveShortenUrl(ShortenUrlCreateRequest(originUrl))
 
             // then
-            assertThat(result).isEqualTo(id)
+            assertThat(result).isEqualTo(ShortenedUrlResponse(id))
             verify { shortenedUrlRepository.save(shortenedUrl) }
         }
 
@@ -54,10 +54,10 @@ class UrlShortenServiceImplTest {
             every { shortenedUrlRepository.findByOriginUrl(originUrl) } returns savedShortenedUrl
 
             // when
-            val result = urlShortenService.saveShortenUrl(originUrl)
+            val result = urlShortenService.saveShortenUrl(ShortenUrlCreateRequest(originUrl))
 
             // then
-            assertThat(result).isEqualTo(id)
+            assertThat(result).isEqualTo(ShortenedUrlResponse(id))
             verify { shortenedUrlRepository.findByOriginUrl(originUrl) }
         }
     }
@@ -83,10 +83,10 @@ class UrlShortenServiceImplTest {
             every { shortenedUrlRepository.findById(id) } returns shortenedUrl
 
             // when
-            val result = urlShortenService.getOriginUrl(id)
+            val result = urlShortenService.getOriginUrl(ShortenUrlSearchRequest(id))
 
             // then
-            assertThat(result).isEqualTo(originUrl)
+            assertThat(result).isEqualTo(OriginUrlResponse(originUrl))
             verify { shortenedUrlRepository.findById(id) }
         }
 
@@ -96,7 +96,8 @@ class UrlShortenServiceImplTest {
             every { shortenedUrlRepository.findById(id) } returns null
 
             // when, then
-            assertThatThrownBy { urlShortenService.getOriginUrl(id) }.isInstanceOf(UrlNotFoundException::class.java)
+            assertThatThrownBy { urlShortenService.getOriginUrl(ShortenUrlSearchRequest(id)) }
+                .isInstanceOf(UrlNotFoundException::class.java)
             verify { shortenedUrlRepository.findById(id) }
         }
     }

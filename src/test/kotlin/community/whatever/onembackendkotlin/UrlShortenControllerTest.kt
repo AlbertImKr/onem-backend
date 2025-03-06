@@ -1,5 +1,6 @@
 package community.whatever.onembackendkotlin
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
@@ -19,18 +20,20 @@ class UrlShortenControllerTest(
     @MockitoBean
     private lateinit var urlShortenService: UrlShortenService
 
+    private val objectMapper = ObjectMapper()
+
     @Test
     fun `원본 URL 등록 시 키를 반환한다`() {
         // given
-        val originUrl = "https://www.google.com"
-        val key = "123"
+        val originUrl = ShortenUrlCreateRequest("https://www.google.com")
+        val key = ShortenedUrlResponse("123")
         given(urlShortenService.saveShortenUrl(originUrl)).willReturn(key)
 
         // when
         val result = mockMvc.perform(
             post("/shorten-url/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(originUrl)
+                .content(objectMapper.writeValueAsString(originUrl))
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -44,15 +47,15 @@ class UrlShortenControllerTest(
     @Test
     fun `키로 검색하면 원본 URL을 반환한다`() {
         // given
-        val originUrl = "https://www.google.com"
-        val key = "123"
+        val originUrl = OriginUrlResponse("https://www.google.com")
+        val key = ShortenUrlSearchRequest("123")
         given(urlShortenService.getOriginUrl(key)).willReturn(originUrl)
 
         // when
         val result = mockMvc.perform(
             post("/shorten-url/search")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(key)
+                .content(objectMapper.writeValueAsString(key))
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -60,20 +63,20 @@ class UrlShortenControllerTest(
             .contentAsString
 
         // then
-        assertThat(originUrl).isEqualTo(result)
+        assertThat(result).isEqualTo(objectMapper.writeValueAsString(originUrl))
     }
 
     @Test
     fun `유요하지 않은 키로 검색하면 404 에러를 반환한다`() {
         // given
-        val invalidKey = "invalid-key"
+        val invalidKey = ShortenUrlSearchRequest("invalid")
         given(urlShortenService.getOriginUrl(invalidKey)).willThrow(UrlNotFoundException())
 
         // when
         mockMvc.perform(
             post("/shorten-url/search")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidKey)
+                .content(objectMapper.writeValueAsString(invalidKey))
         )
             .andExpect(status().isNotFound)
     }
@@ -81,15 +84,15 @@ class UrlShortenControllerTest(
     @Test
     fun `중복된 원본 URL을 등록하면 기존 키를 반환한다`() {
         // given
-        val originUrl = "https://www.google.com"
-        val key = "123"
+        val originUrl = ShortenUrlCreateRequest("https://www.google.com")
+        val key = ShortenedUrlResponse("123")
         given(urlShortenService.saveShortenUrl(originUrl)).willReturn(key)
 
         // when
         val result = mockMvc.perform(
             post("/shorten-url/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(originUrl)
+                .content(objectMapper.writeValueAsString(originUrl))
         )
             .andExpect(status().isOk)
             .andReturn()
@@ -97,6 +100,6 @@ class UrlShortenControllerTest(
             .contentAsString
 
         // then
-        assertThat(key).isEqualTo(result)
+        assertThat(result).isEqualTo(objectMapper.writeValueAsString(key))
     }
 }
