@@ -8,6 +8,7 @@ import org.awaitility.kotlin.untilAsserted
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,32 +43,27 @@ class UrlShortenControllerIntegrationTest {
         )
         fun `등록된 원본 URL을 키로 검색하면 해당 원본 URL을 반환한다`(originUrl: String) = runTest {
             // given
-            val key = createUrl(originUrl)
-                .expectBody(String::class.java)
+            val key = createUrl(ShortenUrlCreateRequest(originUrl))
+                .expectBody(ShortenedUrlResponse::class.java)
                 .returnResult()
                 .responseBody!!
 
             // when
-            val result = searchShortenUrl(key)
+            val result = searchShortenUrl(ShortenUrlSearchRequest(key.shortenedUrl))
 
             // then
             result.expectStatus().isOk()
-                .expectBody(String::class.java)
-                .isEqualTo(originUrl)
+                .expectBody(OriginUrlResponse::class.java)
+                .isEqualTo(OriginUrlResponse(originUrl))
         }
 
-        @ParameterizedTest
-        @CsvSource(
-            "https://www.google.com",
-            "https://www.naver.com",
-            "https://www.daum.net"
-        )
-        fun `등록되지 않은 원본 URL을 키로 검색하면 404를 반환한다`(originUrl: String) = runTest {
+        @Test
+        fun `등록되지 않은 원본 URL을 키로 검색하면 404를 반환한다`() = runTest {
             // given
             val key = "non-exist-key"
 
             // when
-            val result = searchShortenUrl(key)
+            val result = searchShortenUrl(ShortenUrlSearchRequest(key))
 
             // then
             result.expectStatus()
@@ -87,14 +83,14 @@ class UrlShortenControllerIntegrationTest {
         )
         fun `원본 URL을 등록하면 키를 반환한다`(originUrl: String) = runTest {
             // when
-            val result = createUrl(originUrl)
+            val result = createUrl(ShortenUrlCreateRequest(originUrl))
 
             // then
-            val key = result.expectStatus().isOk()
-                .expectBody(String::class.java)
+            val shortenedUrlResponse = result.expectStatus().isOk()
+                .expectBody(ShortenedUrlResponse::class.java)
                 .returnResult()
                 .responseBody!!
-            assertThat(key).isNotBlank()
+            assertThat(shortenedUrlResponse.shortenedUrl).isNotBlank()
         }
 
         @ParameterizedTest
@@ -104,7 +100,8 @@ class UrlShortenControllerIntegrationTest {
             val originUrls = (1..count).map { "https://www.google.com/$it" }
 
             // when
-            val keys = originUrls.map { async { createUrlAndReturnKey(it) } }
+            val keys = originUrls.map { async { createUrlAndReturnKey(ShortenUrlCreateRequest(it)) } }
+                .map { it.await() }
 
             // then
             await untilAsserted { assertThat(keys).hasSize(count).doesNotHaveDuplicates() }
@@ -118,10 +115,10 @@ class UrlShortenControllerIntegrationTest {
         )
         fun `등록된 원본 URL을 다시 등록하면 기존 키를 반환한다`(originUrl: String) = runTest {
             // given
-            val key = createUrlAndReturnKey(originUrl)
+            val key = createUrlAndReturnKey(ShortenUrlCreateRequest(originUrl))
 
             // when
-            val result = createUrl(originUrl)
+            val result = createUrl(ShortenUrlCreateRequest(originUrl))
 
             // then
             result.expectStatus().isOk()
@@ -130,17 +127,17 @@ class UrlShortenControllerIntegrationTest {
         }
     }
 
-    private fun searchShortenUrl(key: String) = webTestClient.post()
+    private fun searchShortenUrl(request: ShortenUrlSearchRequest) = webTestClient.post()
         .uri("/shorten-url/search")
-        .bodyValue(key)
+        .bodyValue(request)
         .exchange()
 
-    private fun createUrl(originUrl: String) = webTestClient.post()
+    private fun createUrl(request: ShortenUrlCreateRequest) = webTestClient.post()
         .uri("/shorten-url/create")
-        .bodyValue(originUrl)
+        .bodyValue(request)
         .exchange()
 
-    private fun createUrlAndReturnKey(originUrl: String) = createUrl(originUrl)
+    private fun createUrlAndReturnKey(request: ShortenUrlCreateRequest) = createUrl(request)
         .expectBody(String::class.java)
         .returnResult()
         .responseBody!!
