@@ -1,4 +1,4 @@
-package community.whatever.onembackendkotlin
+package community.whatever.onembackendkotlin.common.dto
 
 data class ShortenUrlCreateRequest(val originUrl: String)
 

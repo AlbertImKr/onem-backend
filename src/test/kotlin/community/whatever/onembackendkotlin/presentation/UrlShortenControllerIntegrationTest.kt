@@ -1,5 +1,10 @@
-package community.whatever.onembackendkotlin
+package community.whatever.onembackendkotlin.presentation
 
+import community.whatever.onembackendkotlin.common.dto.OriginUrlResponse
+import community.whatever.onembackendkotlin.common.dto.ShortenUrlCreateRequest
+import community.whatever.onembackendkotlin.common.dto.ShortenUrlSearchRequest
+import community.whatever.onembackendkotlin.common.dto.ShortenedUrlResponse
+import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat

@@ -1,5 +1,12 @@
-package community.whatever.onembackendkotlin
+package community.whatever.onembackendkotlin.application
 
+import community.whatever.onembackendkotlin.common.dto.OriginUrlResponse
+import community.whatever.onembackendkotlin.common.dto.ShortenUrlCreateRequest
+import community.whatever.onembackendkotlin.common.dto.ShortenUrlSearchRequest
+import community.whatever.onembackendkotlin.common.dto.ShortenedUrlResponse
+import community.whatever.onembackendkotlin.common.exception.UrlNotFoundException
+import community.whatever.onembackendkotlin.domain.ShortenedUrl
+import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -11,10 +18,10 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("UrlShortenServiceImpl 테스트")
-class UrlShortenServiceImplTest {
+class DefaultUrlShortenServiceTest {
 
     private val shortenedUrlRepository: ShortenedUrlRepository = mockk()
-    private val urlShortenService = UrlShortenServiceImpl(shortenedUrlRepository)
+    private val urlShortenService = DefaultUrlShortenService(shortenedUrlRepository)
 
     @DisplayName("ShortenedUrl 저장")
     @Nested

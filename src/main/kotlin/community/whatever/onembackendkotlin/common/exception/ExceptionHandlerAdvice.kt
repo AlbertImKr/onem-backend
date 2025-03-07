@@ -1,4 +1,4 @@
-package community.whatever.onembackendkotlin
+package community.whatever.onembackendkotlin.common.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler

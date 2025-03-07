@@ -45,3 +45,25 @@ docker run -d --name url-shortener --memory="1g" --cpus="1.0" -p 8080:8080 url-s
 ```shell
 jmeter -t performance/test_plan.jmx
 ```
+
+## 7. 프로제그 layer 구조
+
+- `presentation`: API 요청을 받아 처리하는 계층
+- `application`: 비즈니스 로직을 처리하는 계층
+- `domain`: 비즈니스 로직을 정의하는 계층
+- `infrastructure`: 데이터베이스, 외부 API 등과의 연동을 처리하는 계층
+- `common`: 공통으로 사용되는 코드를 정의하는 계층
+
+```mermaid
+flowchart LR
+    subgraph layered-core
+        A(presentation) --> C(application)
+        C(application) --> D(domain)
+        B(Infrastructure) -->|implements| D
+    end
+    E(common) --> layered-core
+```
+
+> [!Warning]
+> 계층형 아키텍처를 사용하기 때문에 하위 레이어가 상위 레이어에 의존하면 안됩니다.
+> 즉, 의존성 흐름은 항상 아래에서 위로 향해야 합니다.

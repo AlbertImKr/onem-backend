@@ -1,4 +1,4 @@
-package community.whatever.onembackendkotlin
+package community.whatever.onembackendkotlin.common.exception
 
 const val URL_NOT_FOUND_MESSAGE = "해당 키에 대한 URL이 존재하지 않습니다."
 
