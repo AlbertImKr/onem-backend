@@ -1,5 +1,7 @@
-package community.whatever.onembackendkotlin
+package community.whatever.onembackendkotlin.infra.repository
 
+import community.whatever.onembackendkotlin.domain.ShortenedUrl
+import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
 import org.springframework.stereotype.Repository
 import java.util.concurrent.atomic.AtomicLong
 

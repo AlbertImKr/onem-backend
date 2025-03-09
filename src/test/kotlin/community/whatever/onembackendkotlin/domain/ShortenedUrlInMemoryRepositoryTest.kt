@@ -1,5 +1,6 @@
-package community.whatever.onembackendkotlin
+package community.whatever.onembackendkotlin.domain
 
+import community.whatever.onembackendkotlin.infra.repository.ShortenedUrlInMemoryRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested

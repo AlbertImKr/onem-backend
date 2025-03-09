@@ -1,4 +1,4 @@
-package community.whatever.onembackendkotlin
+package community.whatever.onembackendkotlin.domain
 
 interface ShortenedUrlRepository {
     /**

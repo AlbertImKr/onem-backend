@@ -1,5 +1,9 @@
-package community.whatever.onembackendkotlin
+package community.whatever.onembackendkotlin.presentation
 
+import community.whatever.onembackendkotlin.application.dto.ShortenUrlCreateRequest
+import community.whatever.onembackendkotlin.application.dto.ShortenUrlSearchRequest
+import community.whatever.onembackendkotlin.application.dto.ShortenedUrlResponse
+import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -53,8 +57,8 @@ class UrlShortenControllerIntegrationTest {
 
             // then
             result.expectStatus().isOk()
-                .expectBody(OriginUrlResponse::class.java)
-                .isEqualTo(OriginUrlResponse(originUrl))
+                .expectBody()
+                .jsonPath("$.originUrl").isEqualTo(originUrl)
         }
 
         @Test
@@ -86,11 +90,9 @@ class UrlShortenControllerIntegrationTest {
             val result = createUrl(ShortenUrlCreateRequest(originUrl))
 
             // then
-            val shortenedUrlResponse = result.expectStatus().isOk()
-                .expectBody(ShortenedUrlResponse::class.java)
-                .returnResult()
-                .responseBody!!
-            assertThat(shortenedUrlResponse.shortenedUrl).isNotBlank()
+            result.expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.shortenedUrl").isNotEmpty
         }
 
         @ParameterizedTest
@@ -122,8 +124,8 @@ class UrlShortenControllerIntegrationTest {
 
             // then
             result.expectStatus().isOk()
-                .expectBody(String::class.java)
-                .isEqualTo(key)
+                .expectBody()
+                .jsonPath("$.shortenedUrl").isEqualTo(key.shortenedUrl)
         }
     }
 
@@ -137,8 +139,10 @@ class UrlShortenControllerIntegrationTest {
         .bodyValue(request)
         .exchange()
 
-    private fun createUrlAndReturnKey(request: ShortenUrlCreateRequest) = createUrl(request)
-        .expectBody(String::class.java)
-        .returnResult()
-        .responseBody!!
+    private fun createUrlAndReturnKey(request: ShortenUrlCreateRequest): ShortenedUrlResponse {
+        return createUrl(request)
+            .expectBody(ShortenedUrlResponse::class.java)
+            .returnResult()
+            .responseBody!!
+    }
 }
