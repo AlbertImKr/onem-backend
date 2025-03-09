@@ -25,8 +25,10 @@ class DefaultUrlShortenService(private val shortenedUrlRepository: ShortenedUrlR
     override fun saveShortenUrl(request: ShortenUrlCreateRequest): ShortenedUrlResponse {
         val originUrl = request.originUrl
         if (shortenedUrlRepository.existsByOriginUrl(originUrl)) {
-            return ShortenedUrlResponse(shortenedUrlRepository.findByOriginUrl(originUrl)!!.id!!)
+            val id = requireNotNull(shortenedUrlRepository.findByOriginUrl(originUrl)?.id) { "ID가 존재하지 않습니다." }
+            return ShortenedUrlResponse(id)
         }
-        return ShortenedUrlResponse(shortenedUrlRepository.save(ShortenedUrl(originUrl)).id!!)
+        val id = requireNotNull(shortenedUrlRepository.save(ShortenedUrl(originUrl)).id) { "ID가 존재하지 않습니다." }
+        return ShortenedUrlResponse(id)
     }
 }
