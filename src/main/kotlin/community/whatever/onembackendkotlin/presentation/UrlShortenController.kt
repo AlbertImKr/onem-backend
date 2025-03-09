@@ -1,10 +1,10 @@
 package community.whatever.onembackendkotlin.presentation
 
 import community.whatever.onembackendkotlin.application.UrlShortenService
-import community.whatever.onembackendkotlin.common.dto.OriginUrlResponse
-import community.whatever.onembackendkotlin.common.dto.ShortenUrlCreateRequest
-import community.whatever.onembackendkotlin.common.dto.ShortenUrlSearchRequest
-import community.whatever.onembackendkotlin.common.dto.ShortenedUrlResponse
+import community.whatever.onembackendkotlin.application.dto.OriginUrlResponse
+import community.whatever.onembackendkotlin.application.dto.ShortenUrlCreateRequest
+import community.whatever.onembackendkotlin.application.dto.ShortenUrlSearchRequest
+import community.whatever.onembackendkotlin.application.dto.ShortenedUrlResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

@@ -1,4 +1,4 @@
-package community.whatever.onembackendkotlin.common.exception
+package community.whatever.onembackendkotlin.application.exception
 
 class UrlNotFoundException : RuntimeException(URL_NOT_FOUND_MESSAGE) {
     companion object {
