@@ -1,0 +1,66 @@
+= Shorten URL Service API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[introduction]]
+== Introduction
+
+URL Shortener 서비스는 긴 URL을 짧은 key로 변환하여 보다 간편하게 공유할 수 있도록 해주는 서비스입니다.
+
+[[shorten-url]]
+== Shorten URL 생성
+
+=== Request
+
+include::{snippets}/url-short-controller-e2e-test/원본 url을 등록하고 키로 조회한다/http-request.adoc[]
+
+=== Request Fields
+
+include::{snippets}/url-short-controller-e2e-test/원본 url을 등록하고 키로 조회한다/request-fields.adoc[]
+
+=== Response
+
+include::{snippets}/url-short-controller-e2e-test/원본 url을 등록하고 키로 조회한다/response-body.adoc[]
+
+=== Response Fields
+
+include::{snippets}/url-short-controller-e2e-test/원본 url을 등록하고 키로 조회한다/response-fields.adoc[]
+
+=== curl
+
+include::{snippets}/url-short-controller-e2e-test/원본 url을 등록하고 키로 조회한다/curl-request.adoc[]
+
+=== httpie
+
+include::{snippets}/url-short-controller-e2e-test/원본 url을 등록하고 키로 조회한다/httpie-request.adoc[]
+
+[[search-url]]
+== Shorten URL 조회
+
+=== Request
+
+include::{snippets}/url-short-controller-e2e-test/키로 검색하면 원본 url을 반환한다/http-request.adoc[]
+
+=== Request Fields
+
+include::{snippets}/url-short-controller-e2e-test/키로 검색하면 원본 url을 반환한다/request-fields.adoc[]
+
+=== Response
+
+include::{snippets}/url-short-controller-e2e-test/키로 검색하면 원본 url을 반환한다/response-body.adoc[]
+
+=== Response Fields
+
+include::{snippets}/url-short-controller-e2e-test/키로 검색하면 원본 url을 반환한다/response-fields.adoc[]
+
+=== curl
+
+include::{snippets}/url-short-controller-e2e-test/키로 검색하면 원본 url을 반환한다/curl-request.adoc[]
+
+=== httpie
+
+include::{snippets}/url-short-controller-e2e-test/키로 검색하면 원본 url을 반환한다/httpie-request.adoc[]
