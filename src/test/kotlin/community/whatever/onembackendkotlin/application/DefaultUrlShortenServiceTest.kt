@@ -1,15 +1,14 @@
 package community.whatever.onembackendkotlin.application
 
-import community.whatever.onembackendkotlin.application.dto.OriginUrlResponse
+import community.whatever.onembackendkotlin.application.dto.BlockedDomainCreateRequest
 import community.whatever.onembackendkotlin.application.dto.ShortenUrlCreateRequest
 import community.whatever.onembackendkotlin.application.dto.ShortenUrlSearchRequest
-import community.whatever.onembackendkotlin.application.dto.ShortenedUrlResponse
+import community.whatever.onembackendkotlin.application.exception.DomainAlreadyBlockedException
 import community.whatever.onembackendkotlin.application.exception.UrlNotFoundException
 import community.whatever.onembackendkotlin.domain.ShortenedUrl
 import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import community.whatever.onembackendkotlin.infra.repository.BlockedDomainInMemoryRepository
+import community.whatever.onembackendkotlin.infra.repository.ShortenedUrlInMemoryRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -17,55 +16,62 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-@DisplayName("UrlShortenServiceImpl 테스트")
 class DefaultUrlShortenServiceTest {
 
-    private val shortenedUrlRepository: ShortenedUrlRepository = mockk()
-    private val urlShortenService = DefaultUrlShortenService(shortenedUrlRepository)
+    private lateinit var shortenedUrlRepository: ShortenedUrlRepository
+    private lateinit var blockedDomainService: BlockedDomainService
+    private lateinit var urlShortenService: UrlShortenService
+
+    @BeforeEach
+    fun setUp() {
+        shortenedUrlRepository = ShortenedUrlInMemoryRepository()
+        blockedDomainService = DefaultBlockedDomainService(BlockedDomainInMemoryRepository())
+        urlShortenService = DefaultUrlShortenService(shortenedUrlRepository, blockedDomainService)
+    }
 
     @DisplayName("ShortenedUrl 저장")
     @Nested
     inner class SaveShortenUrl {
 
         private lateinit var originUrl: String
-        private lateinit var id: String
         private lateinit var shortenedUrl: ShortenedUrl
         private lateinit var savedShortenedUrl: ShortenedUrl
 
         @BeforeEach
         fun setUp() {
             originUrl = "https://www.google.com"
-            id = "abc"
             shortenedUrl = ShortenedUrl(originUrl)
-            savedShortenedUrl = shortenedUrl.copy(id = id)
         }
 
         @Test
         fun `저장된 url이 없으면 새로 저장하고 키를 반환한다`() {
-            // given
-            every { shortenedUrlRepository.existsByOriginUrl(originUrl) } returns false
-            every { shortenedUrlRepository.save(shortenedUrl) } returns savedShortenedUrl
-
             // when
             val result = urlShortenService.saveShortenUrl(ShortenUrlCreateRequest(originUrl))
 
             // then
-            assertThat(result).isEqualTo(ShortenedUrlResponse(id))
-            verify { shortenedUrlRepository.save(shortenedUrl) }
+            assertThat(result.shortenedUrl).isNotNull
         }
 
         @Test
         fun `이미 저장된 url이 있으면 찾아서 키를 반환한다`() {
             // given
-            every { shortenedUrlRepository.existsByOriginUrl(originUrl) } returns true
-            every { shortenedUrlRepository.findByOriginUrl(originUrl) } returns savedShortenedUrl
+            val expect = urlShortenService.saveShortenUrl(ShortenUrlCreateRequest(originUrl))
 
             // when
             val result = urlShortenService.saveShortenUrl(ShortenUrlCreateRequest(originUrl))
 
             // then
-            assertThat(result).isEqualTo(ShortenedUrlResponse(id))
-            verify { shortenedUrlRepository.findByOriginUrl(originUrl) }
+            assertThat(result).isEqualTo(expect)
+        }
+
+        @Test
+        fun `차단된 도메인이면 예외를 발생시킨다`() {
+            // given
+            blockedDomainService.saveBlockedDomain(BlockedDomainCreateRequest(originUrl))
+
+            // when, then
+            assertThatThrownBy { urlShortenService.saveShortenUrl(ShortenUrlCreateRequest(originUrl)) }
+                .isInstanceOf(DomainAlreadyBlockedException::class.java)
         }
     }
 
@@ -73,39 +79,32 @@ class DefaultUrlShortenServiceTest {
     @Nested
     inner class GetOriginUrl {
 
-        private lateinit var id: String
         private lateinit var originUrl: String
         private lateinit var shortenedUrl: ShortenedUrl
 
         @BeforeEach
         fun setUp() {
-            id = "abc"
             originUrl = "https://www.google.com"
-            shortenedUrl = ShortenedUrl(originUrl, id)
+            shortenedUrl = ShortenedUrl(originUrl)
         }
 
         @Test
         fun `id에 해당하는 원본 URL을 찾아서 반환한다`() {
             // given
-            every { shortenedUrlRepository.findById(id) } returns shortenedUrl
+            val expect = shortenedUrlRepository.save(shortenedUrl)
 
             // when
-            val result = urlShortenService.getOriginUrl(ShortenUrlSearchRequest(id))
+            val result = urlShortenService.getOriginUrl(ShortenUrlSearchRequest(requireNotNull(expect.id)))
 
             // then
-            assertThat(result).isEqualTo(OriginUrlResponse(originUrl))
-            verify { shortenedUrlRepository.findById(id) }
+            assertThat(result.originUrl).isEqualTo(originUrl)
         }
 
         @Test
         fun `id에 해당하는 원본 URL이 없으면 예외를 발생시킨다`() {
-            // given
-            every { shortenedUrlRepository.findById(id) } returns null
-
             // when, then
-            assertThatThrownBy { urlShortenService.getOriginUrl(ShortenUrlSearchRequest(id)) }
+            assertThatThrownBy { urlShortenService.getOriginUrl(ShortenUrlSearchRequest("not-exist-id")) }
                 .isInstanceOf(UrlNotFoundException::class.java)
-            verify { shortenedUrlRepository.findById(id) }
         }
     }
 }

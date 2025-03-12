@@ -1,5 +1,6 @@
 package community.whatever.onembackendkotlin.presentation
 
+import community.whatever.onembackendkotlin.application.exception.DomainAlreadyBlockedException
 import community.whatever.onembackendkotlin.application.exception.UrlNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -9,13 +10,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class ExceptionHandlerAdvice {
 
-    companion object {
-        const val DEFAULT_404_MESSAGE = "URL을 찾을 수 없습니다."
-    }
-
     @ExceptionHandler(UrlNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleIllegalArgumentException(e: UrlNotFoundException): String {
-        return e.message ?: DEFAULT_404_MESSAGE
+        return requireNotNull(e.message)
+    }
+
+    @ExceptionHandler(DomainAlreadyBlockedException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleDomainAlreadyBlockedException(e: DomainAlreadyBlockedException): String {
+        return requireNotNull(e.message)
     }
 }

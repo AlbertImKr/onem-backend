@@ -1,0 +1,29 @@
+### 차단 할 Domain 저장
+POST {{baseUrl}}/blocked-domains/create
+Content-Type: application/json
+
+{
+  "url": "https://www.naver.com"
+}
+
+### 사용자가 차단 한 Domain 조회할 수 있습니다.
+
+### 차단 된 Domain 조회
+POST {{baseUrl}}/blocked-domains/all
+Content-Type: application/json
+
+### 차단 된 Domain 삭제
+POST {{baseUrl}}/blocked-domains/delete
+Content-Type: application/json
+
+{
+  "url": "https://www.naver.com"
+}
+
+### 차단 되였는지 확인
+POST {{baseUrl}}/blocked-domains/check
+Content-Type: application/json
+
+{
+  "url": "https://www.naver.com"
+}
