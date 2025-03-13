@@ -1,6 +1,8 @@
-package community.whatever.onembackendkotlin.domain
+package community.whatever.onembackendkotlin.infra.repository
 
-import community.whatever.onembackendkotlin.infra.repository.ShortenedUrlInMemoryRepository
+import community.whatever.onembackendkotlin.domain.ShortenedUrl
+import net.datafaker.Faker
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Test
 class ShortenedUrlInMemoryRepositoryTest {
 
     private lateinit var repository: ShortenedUrlInMemoryRepository
+    private val faker = Faker()
 
     @BeforeEach
     fun setUp() {
@@ -22,23 +25,25 @@ class ShortenedUrlInMemoryRepositoryTest {
         @Test
         fun `존재하는 아이디로 찾으면 해당 ShortenedUrl을 반환한다`() {
             // given
-            val shortenedUrl = ShortenedUrl("https://www.google.com")
+            val originUrl: String = faker.internet().url()
+            val shortenedUrl = ShortenedUrl(originUrl)
             val savedShortenedUrl = repository.save(shortenedUrl)
 
             // when
             val foundShortenedUrl = repository.findById(savedShortenedUrl.id!!)
 
             // then
-            assert(foundShortenedUrl == savedShortenedUrl)
+            assertThat(foundShortenedUrl).isEqualTo(savedShortenedUrl)
         }
 
         @Test
         fun `존재하지 않는 아이디로 찾으면 null을 반환한다`() {
             // when
-            val foundShortenedUrl = repository.findById("non-exist-id")
+            val notFoundShortenedUrl = faker.internet().url()
+            val foundShortenedUrl = repository.findById(notFoundShortenedUrl)
 
             // then
-            assert(foundShortenedUrl == null)
+            assertThat(foundShortenedUrl).isNull()
         }
     }
 
@@ -49,29 +54,31 @@ class ShortenedUrlInMemoryRepositoryTest {
         @Test
         fun `ShortenedUrl을 저장하면 저장된 ShortenedUrl을 반환한다`() {
             // given
-            val shortenedUrl = ShortenedUrl("https://www.google.com")
+            val originUrl = faker.internet().url()
+            val shortenedUrl = ShortenedUrl(originUrl)
 
             // when
             val savedShortenedUrl = repository.save(shortenedUrl)
 
             // then
-            assert(savedShortenedUrl.originUrl == shortenedUrl.originUrl)
-            assert(savedShortenedUrl.id != null)
+            assertThat(savedShortenedUrl.originUrl).isEqualTo(originUrl)
+            assertThat(savedShortenedUrl.id).isNotNull()
         }
 
         @Test
         fun `ShortenedUrl을 저장하면 저장된 ShortenedUrl의 id는 순차적으로 증가한다`() {
             // given
-            val shortenedUrl1 = ShortenedUrl("https://www.google.com")
-            val shortenedUrl2 = ShortenedUrl("https://www.naver.com")
+            val originUrl1 = faker.internet().url()
+            val shortenedUrl1 = ShortenedUrl(originUrl1)
+            val originUrl2 = faker.internet().url()
+            val shortenedUrl2 = ShortenedUrl(originUrl2)
 
             // when
             val savedShortenedUrl1 = repository.save(shortenedUrl1)
             val savedShortenedUrl2 = repository.save(shortenedUrl2)
 
             // then
-            assert(savedShortenedUrl1.id == "1")
-            assert(savedShortenedUrl2.id == "2")
+            assertThat(savedShortenedUrl1.id).isNotEqualTo(savedShortenedUrl2.id)
         }
     }
 
@@ -82,7 +89,8 @@ class ShortenedUrlInMemoryRepositoryTest {
         @Test
         fun `존재하는 원본 URL로 확인하면 true를 반환한다`() {
             // given
-            val shortenedUrl = ShortenedUrl("https://www.google.com")
+            val originUrl = faker.internet().url()
+            val shortenedUrl = ShortenedUrl(originUrl)
             repository.save(shortenedUrl)
 
             // when
@@ -95,7 +103,8 @@ class ShortenedUrlInMemoryRepositoryTest {
         @Test
         fun `존재하지 않는 원본 URL로 확인하면 false를 반환한다`() {
             // when
-            val exists = repository.existsByOriginUrl("non-exist-origin-url")
+            val nonExistentOriginUrl = faker.internet().url()
+            val exists = repository.existsByOriginUrl(nonExistentOriginUrl)
 
             // then
             assert(!exists)
@@ -109,7 +118,8 @@ class ShortenedUrlInMemoryRepositoryTest {
         @Test
         fun `존재하는 원본 URL로 찾으면 해당 ShortenedUrl을 반환한다`() {
             // given
-            val shortenedUrl = ShortenedUrl("https://www.google.com")
+            val originUrl = faker.internet().url()
+            val shortenedUrl = ShortenedUrl(originUrl)
             val savedShortenedUrl = repository.save(shortenedUrl)
 
             // when
@@ -122,7 +132,8 @@ class ShortenedUrlInMemoryRepositoryTest {
         @Test
         fun `존재하지 않는 원본 URL로 찾으면 null을 반환한다`() {
             // when
-            val foundShortenedUrl = repository.findByOriginUrl("non-exist-origin-url")
+            val nonExistentOriginUrl = faker.internet().url()
+            val foundShortenedUrl = repository.findByOriginUrl(nonExistentOriginUrl)
 
             // then
             assert(foundShortenedUrl == null)

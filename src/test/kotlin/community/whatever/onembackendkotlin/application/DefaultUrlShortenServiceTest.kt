@@ -9,6 +9,7 @@ import community.whatever.onembackendkotlin.domain.ShortenedUrl
 import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
 import community.whatever.onembackendkotlin.infra.repository.BlockedDomainInMemoryRepository
 import community.whatever.onembackendkotlin.infra.repository.ShortenedUrlInMemoryRepository
+import net.datafaker.Faker
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -21,6 +22,7 @@ class DefaultUrlShortenServiceTest {
     private lateinit var shortenedUrlRepository: ShortenedUrlRepository
     private lateinit var blockedDomainService: BlockedDomainService
     private lateinit var urlShortenService: UrlShortenService
+    private val faker = Faker()
 
     @BeforeEach
     fun setUp() {
@@ -35,11 +37,10 @@ class DefaultUrlShortenServiceTest {
 
         private lateinit var originUrl: String
         private lateinit var shortenedUrl: ShortenedUrl
-        private lateinit var savedShortenedUrl: ShortenedUrl
 
         @BeforeEach
         fun setUp() {
-            originUrl = "https://www.google.com"
+            originUrl = faker.internet().url()
             shortenedUrl = ShortenedUrl(originUrl)
         }
 
@@ -84,7 +85,7 @@ class DefaultUrlShortenServiceTest {
 
         @BeforeEach
         fun setUp() {
-            originUrl = "https://www.google.com"
+            originUrl = faker.internet().url()
             shortenedUrl = ShortenedUrl(originUrl)
         }
 
@@ -103,7 +104,7 @@ class DefaultUrlShortenServiceTest {
         @Test
         fun `id에 해당하는 원본 URL이 없으면 예외를 발생시킨다`() {
             // when, then
-            assertThatThrownBy { urlShortenService.getOriginUrl(ShortenUrlSearchRequest("not-exist-id")) }
+            assertThatThrownBy { urlShortenService.getOriginUrl(ShortenUrlSearchRequest(originUrl)) }
                 .isInstanceOf(UrlNotFoundException::class.java)
         }
     }

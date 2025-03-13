@@ -12,6 +12,7 @@ val coroutinesVersion = "1.10.1"
 val awaitilityVersion = "4.2.0"
 val mockkVersion = "1.13.17"
 val restAssuredVersion = "5.5.0"
+val datafakerVersion = "2.4.2"
 
 java {
     toolchain {
@@ -48,6 +49,8 @@ dependencies {
     testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
     // RestDocs를 사용하여 API 문서를 생성하기 위해 asciidoctor를 추가합니다.
     testImplementation("org.springframework.restdocs:spring-restdocs-asciidoctor")
+    // Dummy Data로 테스트를 하기 위해 Datafacker를 추가합니다.
+    testImplementation("net.datafaker:datafaker:$datafakerVersion")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

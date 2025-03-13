@@ -7,6 +7,7 @@ import community.whatever.onembackendkotlin.application.exception.DomainAlreadyB
 import community.whatever.onembackendkotlin.domain.BlockedDomain
 import community.whatever.onembackendkotlin.domain.BlockedDomainRepository
 import community.whatever.onembackendkotlin.infra.repository.BlockedDomainInMemoryRepository
+import net.datafaker.Faker
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -18,6 +19,7 @@ class DefaultBlockedDomainServiceTest {
 
     private lateinit var blockedDomainService: BlockedDomainService
     private lateinit var blockedDomainRepository: BlockedDomainRepository
+    private val faker = Faker()
 
     @BeforeEach
     fun setUp() {
@@ -34,7 +36,7 @@ class DefaultBlockedDomainServiceTest {
 
         @BeforeEach
         fun setUp() {
-            url = "https://www.google.com"
+            url = faker.internet().url()
             blockedDomain = BlockedDomain(url)
         }
 
@@ -69,7 +71,7 @@ class DefaultBlockedDomainServiceTest {
 
         @BeforeEach
         fun setUp() {
-            url = "https://www.google.com"
+            url = faker.internet().url()
         }
 
         @Test
@@ -93,7 +95,7 @@ class DefaultBlockedDomainServiceTest {
 
         @BeforeEach
         fun setUp() {
-            url = "https://www.google.com"
+            url = faker.internet().url()
         }
 
         @Test
@@ -117,7 +119,7 @@ class DefaultBlockedDomainServiceTest {
 
         @BeforeEach
         fun setUp() {
-            url = "https://www.google.com"
+            url = faker.internet().url()
         }
 
         @Test
