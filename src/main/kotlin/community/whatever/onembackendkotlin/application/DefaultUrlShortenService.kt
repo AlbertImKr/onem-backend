@@ -27,11 +27,10 @@ class DefaultUrlShortenService(
         if (blockedDomainService.isBlocked(BlockedDomainCheckRequest(originUrl))) {
             throw DomainAlreadyBlockedException()
         }
-        if (shortenedUrlRepository.existsByOriginUrl(originUrl)) {
-            val id = requireNotNull(shortenedUrlRepository.findByOriginUrl(originUrl)?.id) { "ID가 존재하지 않습니다." }
-            return ShortenedUrlResponse(id)
-        }
-        val id = requireNotNull(shortenedUrlRepository.save(ShortenedUrl(originUrl)).id) { "ID가 존재하지 않습니다." }
-        return ShortenedUrlResponse(id)
+        shortenedUrlRepository.findByOriginUrl(originUrl)?.id
+            ?.let { return ShortenedUrlResponse(it) }
+        return shortenedUrlRepository.save(ShortenedUrl(originUrl)).id
+            ?.let { ShortenedUrlResponse(it) }
+            ?: throw UrlNotFoundException()
     }
 }
