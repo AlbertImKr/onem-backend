@@ -22,8 +22,7 @@ class DefaultBlockedDomainService(private val blockedDomainRepository: BlockedDo
     }
 
     override fun isBlocked(request: BlockedDomainCheckRequest): Boolean {
-        val domain = URL(request.url).host
-        return blockedDomainRepository.existsByDomain(domain)
+        return URL(request.url).host.let { blockedDomainRepository.existsByDomain(it) }
     }
 
     override fun delete(request: BlockedDomainDeleteRequest) {
