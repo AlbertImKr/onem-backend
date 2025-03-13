@@ -18,7 +18,7 @@ class DefaultBlockedDomainService(private val blockedDomainRepository: BlockedDo
         if (blockedDomainRepository.existsByDomain(domain)) {
             throw DomainAlreadyBlockedException()
         }
-        return blockedDomainRepository.save(BlockedDomain(domain = domain, UUID.randomUUID()))
+        return blockedDomainRepository.save(BlockedDomain(domain = domain, id = UUID.randomUUID()))
     }
 
     override fun isBlocked(request: BlockedDomainCheckRequest): Boolean {
