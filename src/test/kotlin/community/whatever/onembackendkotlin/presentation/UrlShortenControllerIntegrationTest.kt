@@ -6,6 +6,7 @@ import community.whatever.onembackendkotlin.application.dto.ShortenedUrlResponse
 import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
+import net.datafaker.Faker
 import org.assertj.core.api.Assertions.assertThat
 import org.awaitility.kotlin.await
 import org.awaitility.kotlin.untilAsserted
@@ -29,6 +30,7 @@ class UrlShortenControllerIntegrationTest {
 
     @Autowired
     private lateinit var shortenedUrlRepository: ShortenedUrlRepository
+    private val faker = Faker()
 
     @BeforeEach
     fun setUp() {
@@ -39,14 +41,10 @@ class UrlShortenControllerIntegrationTest {
     @Nested
     inner class ShortenUrlSearch {
 
-        @ParameterizedTest
-        @CsvSource(
-            "https://www.google.com",
-            "https://www.naver.com",
-            "https://www.daum.net"
-        )
-        fun `등록된 원본 URL을 키로 검색하면 해당 원본 URL을 반환한다`(originUrl: String) = runTest {
+        @Test
+        fun `등록된 원본 URL을 키로 검색하면 해당 원본 URL을 반환한다`() = runTest {
             // given
+            val originUrl = faker.internet().url()
             val key = createUrl(ShortenUrlCreateRequest(originUrl))
                 .expectBody(ShortenedUrlResponse::class.java)
                 .returnResult()
@@ -64,7 +62,7 @@ class UrlShortenControllerIntegrationTest {
         @Test
         fun `등록되지 않은 원본 URL을 키로 검색하면 404를 반환한다`() = runTest {
             // given
-            val key = "non-exist-key"
+            val key = faker.internet().url()
 
             // when
             val result = searchShortenUrl(ShortenUrlSearchRequest(key))
@@ -79,14 +77,10 @@ class UrlShortenControllerIntegrationTest {
     @Nested
     inner class ShortenUrlCreate {
 
-        @ParameterizedTest
-        @CsvSource(
-            "https://www.google.com",
-            "https://www.naver.com",
-            "https://www.daum.net"
-        )
-        fun `원본 URL을 등록하면 키를 반환한다`(originUrl: String) = runTest {
+        @Test
+        fun `원본 URL을 등록하면 키를 반환한다`() = runTest {
             // when
+            val originUrl = faker.internet().url()
             val result = createUrl(ShortenUrlCreateRequest(originUrl))
 
             // then
@@ -99,7 +93,7 @@ class UrlShortenControllerIntegrationTest {
         @CsvSource("50", "100")
         fun `동시에 여러 개의 원본 URL을 등록해도 키가 중복되지 않는다`(count: Int) = runTest {
             // given
-            val originUrls = (1..count).map { "https://www.google.com/$it" }
+            val originUrls = (1..count).map { faker.internet().url() }
 
             // when
             val keys = originUrls.map { async { createUrlAndReturnKey(ShortenUrlCreateRequest(it)) } }
@@ -109,14 +103,10 @@ class UrlShortenControllerIntegrationTest {
             await untilAsserted { assertThat(keys).hasSize(count).doesNotHaveDuplicates() }
         }
 
-        @ParameterizedTest
-        @CsvSource(
-            "https://www.google.com",
-            "https://www.naver.com",
-            "https://www.daum.net"
-        )
-        fun `등록된 원본 URL을 다시 등록하면 기존 키를 반환한다`(originUrl: String) = runTest {
+        @Test
+        fun `등록된 원본 URL을 다시 등록하면 기존 키를 반환한다`() = runTest {
             // given
+            val originUrl = faker.internet().url()
             val key = createUrlAndReturnKey(ShortenUrlCreateRequest(originUrl))
 
             // when

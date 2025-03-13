@@ -3,6 +3,7 @@ package community.whatever.onembackendkotlin.presentation
 import io.restassured.RestAssured
 import io.restassured.builder.RequestSpecBuilder
 import io.restassured.specification.RequestSpecification
+import net.datafaker.Faker
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,6 +29,7 @@ class UrlShortControllerE2ETest {
     private var port: Int = 8080
 
     private lateinit var spec: RequestSpecification
+    private val faker = Faker()
 
     @BeforeEach
     fun setUp(provider: RestDocumentationContextProvider) {
@@ -58,7 +60,7 @@ class UrlShortControllerE2ETest {
 
         // given
         val body = mapOf(
-            "originUrl" to "https://www.google.com"
+            "originUrl" to faker.internet().url()
         )
 
         // when
@@ -96,7 +98,7 @@ class UrlShortControllerE2ETest {
 
         // given
         val body = mapOf(
-            "originUrl" to "https://www.google.com"
+            "originUrl" to faker.internet().url()
         )
 
         val response = RestAssured
@@ -126,6 +128,6 @@ class UrlShortControllerE2ETest {
 
         // then
         assertThat(response2.statusCode()).isEqualTo(200)
-        assertThat(response2.path<String>("originUrl")).isEqualTo("https://www.google.com")
+        assertThat(response2.path<String>("originUrl")).isEqualTo(body["originUrl"])
     }
 }
