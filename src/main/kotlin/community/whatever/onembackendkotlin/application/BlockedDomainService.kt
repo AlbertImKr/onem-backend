@@ -7,11 +7,11 @@ import community.whatever.onembackendkotlin.domain.BlockedDomain
 
 interface BlockedDomainService {
 
-    fun saveBlockedDomain(request: BlockedDomainCreateRequest): BlockedDomain
+    fun save(request: BlockedDomainCreateRequest): BlockedDomain
 
-    fun isBlockedDomain(request: BlockedDomainCheckRequest): Boolean
+    fun isBlocked(request: BlockedDomainCheckRequest): Boolean
 
-    fun deleteBlockedDomain(request: BlockedDomainDeleteRequest)
+    fun delete(request: BlockedDomainDeleteRequest)
 
-    fun getAllBlockedDomains(): List<BlockedDomain>
+    fun getAll(): List<BlockedDomain>
 }

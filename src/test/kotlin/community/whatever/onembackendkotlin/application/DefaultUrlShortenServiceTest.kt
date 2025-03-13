@@ -67,7 +67,7 @@ class DefaultUrlShortenServiceTest {
         @Test
         fun `차단된 도메인이면 예외를 발생시킨다`() {
             // given
-            blockedDomainService.saveBlockedDomain(BlockedDomainCreateRequest(originUrl))
+            blockedDomainService.save(BlockedDomainCreateRequest(originUrl))
 
             // when, then
             assertThatThrownBy { urlShortenService.saveShortenUrl(ShortenUrlCreateRequest(originUrl)) }

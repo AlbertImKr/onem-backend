@@ -15,22 +15,22 @@ class BlockedDomainController(private val blockedDomainService: BlockedDomainSer
 
     @PostMapping("/blocked-domains/create")
     fun saveBlockedDomain(@RequestBody request: BlockedDomainCreateRequest): ResponseEntity<BlockedDomain> {
-        return ResponseEntity.ok(blockedDomainService.saveBlockedDomain(request))
+        return ResponseEntity.ok(blockedDomainService.save(request))
     }
 
     @PostMapping("/blocked-domains/check")
     fun isBlockedDomain(@RequestBody request: BlockedDomainCheckRequest): ResponseEntity<IsBlockedDomainResponse> {
-        return ResponseEntity.ok(IsBlockedDomainResponse(blockedDomainService.isBlockedDomain(request)))
+        return ResponseEntity.ok(IsBlockedDomainResponse(blockedDomainService.isBlocked(request)))
     }
 
     @PostMapping("/blocked-domains/delete")
     fun deleteBlockedDomain(@RequestBody request: BlockedDomainDeleteRequest): ResponseEntity<Unit> {
-        blockedDomainService.deleteBlockedDomain(request)
+        blockedDomainService.delete(request)
         return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/blocked-domains/all")
     fun getAllBlockedDomains(): ResponseEntity<List<BlockedDomain>> {
-        return ResponseEntity.ok(blockedDomainService.getAllBlockedDomains())
+        return ResponseEntity.ok(blockedDomainService.getAll())
     }
 }

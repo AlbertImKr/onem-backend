@@ -41,7 +41,7 @@ class DefaultBlockedDomainServiceTest {
         @Test
         fun `저장된 도메인이 없으면 새로 저장하고 반환한다`() {
             // when
-            val result = blockedDomainService.saveBlockedDomain(
+            val result = blockedDomainService.save(
                 BlockedDomainCreateRequest(url)
             )
 
@@ -53,10 +53,10 @@ class DefaultBlockedDomainServiceTest {
         fun `이미 저장된 도메인이 있으면 예외를 발생시킨다`() {
             // given
             val request = BlockedDomainCreateRequest(url)
-            blockedDomainService.saveBlockedDomain(request)
+            blockedDomainService.save(request)
 
             // when
-            assertThatThrownBy { blockedDomainService.saveBlockedDomain(request) }
+            assertThatThrownBy { blockedDomainService.save(request) }
                 .isInstanceOf(DomainAlreadyBlockedException::class.java)
         }
     }
@@ -75,13 +75,13 @@ class DefaultBlockedDomainServiceTest {
         @Test
         fun `저장된 도메인을 삭제한다`() {
             // given
-            blockedDomainService.saveBlockedDomain(BlockedDomainCreateRequest(url))
+            blockedDomainService.save(BlockedDomainCreateRequest(url))
 
             // when
-            blockedDomainService.deleteBlockedDomain(BlockedDomainDeleteRequest(url))
+            blockedDomainService.delete(BlockedDomainDeleteRequest(url))
 
             // then
-            assertThat(blockedDomainService.isBlockedDomain(BlockedDomainCheckRequest(url))).isFalse()
+            assertThat(blockedDomainService.isBlocked(BlockedDomainCheckRequest(url))).isFalse()
         }
     }
 
@@ -99,10 +99,10 @@ class DefaultBlockedDomainServiceTest {
         @Test
         fun `저장된 모든 도메인을 조회한다`() {
             // given
-            blockedDomainService.saveBlockedDomain(BlockedDomainCreateRequest(url))
+            blockedDomainService.save(BlockedDomainCreateRequest(url))
 
             // when
-            val result = blockedDomainService.getAllBlockedDomains()
+            val result = blockedDomainService.getAll()
 
             // then
             assertThat(result).isNotEmpty
@@ -123,10 +123,10 @@ class DefaultBlockedDomainServiceTest {
         @Test
         fun `저장된 도메인이 존재하는지 확인한다`() {
             // given
-            blockedDomainService.saveBlockedDomain(BlockedDomainCreateRequest(url))
+            blockedDomainService.save(BlockedDomainCreateRequest(url))
 
             // when
-            val result = blockedDomainService.isBlockedDomain(BlockedDomainCheckRequest(url))
+            val result = blockedDomainService.isBlocked(BlockedDomainCheckRequest(url))
 
             // then
             assertThat(result).isTrue()
@@ -135,7 +135,7 @@ class DefaultBlockedDomainServiceTest {
         @Test
         fun `저장된 도메인이 존재하지 않는지 확인한다`() {
             // when
-            val result = blockedDomainService.isBlockedDomain(BlockedDomainCheckRequest(url))
+            val result = blockedDomainService.isBlocked(BlockedDomainCheckRequest(url))
 
             // then
             assertThat(result).isFalse()

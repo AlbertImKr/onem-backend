@@ -24,7 +24,7 @@ class DefaultUrlShortenService(
 
     override fun saveShortenUrl(request: ShortenUrlCreateRequest): ShortenedUrlResponse {
         val originUrl = request.originUrl
-        if (blockedDomainService.isBlockedDomain(BlockedDomainCheckRequest(originUrl))) {
+        if (blockedDomainService.isBlocked(BlockedDomainCheckRequest(originUrl))) {
             throw DomainAlreadyBlockedException()
         }
         if (shortenedUrlRepository.existsByOriginUrl(originUrl)) {

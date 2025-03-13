@@ -13,7 +13,7 @@ import java.util.UUID
 @Service
 class DefaultBlockedDomainService(private val blockedDomainRepository: BlockedDomainRepository) : BlockedDomainService {
 
-    override fun saveBlockedDomain(request: BlockedDomainCreateRequest): BlockedDomain {
+    override fun save(request: BlockedDomainCreateRequest): BlockedDomain {
         val domain = URL(request.url).host
         if (blockedDomainRepository.existsByDomain(domain)) {
             throw DomainAlreadyBlockedException()
@@ -21,17 +21,17 @@ class DefaultBlockedDomainService(private val blockedDomainRepository: BlockedDo
         return blockedDomainRepository.save(BlockedDomain(domain = domain, UUID.randomUUID()))
     }
 
-    override fun isBlockedDomain(request: BlockedDomainCheckRequest): Boolean {
+    override fun isBlocked(request: BlockedDomainCheckRequest): Boolean {
         val domain = URL(request.url).host
         return blockedDomainRepository.existsByDomain(domain)
     }
 
-    override fun deleteBlockedDomain(request: BlockedDomainDeleteRequest) {
+    override fun delete(request: BlockedDomainDeleteRequest) {
         val domain = URL(request.url).host
         blockedDomainRepository.deleteByDomain(domain)
     }
 
-    override fun getAllBlockedDomains(): List<BlockedDomain> {
+    override fun getAll(): List<BlockedDomain> {
         return blockedDomainRepository.findAll()
     }
 }
