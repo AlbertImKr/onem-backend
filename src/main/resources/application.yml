@@ -16,3 +16,4 @@ logging:
       file-name-pattern: "logs/onem-backend-kotlin-%d{yyyy-MM-dd}.%i.log"
 shorten-url:
   expire-minutes: 1
+  delete-expired-rate: 30000 # 30 초 (밀리초 단위)

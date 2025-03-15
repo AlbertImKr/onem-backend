@@ -12,7 +12,7 @@ class ShortenUrlScheduler(
     @Value("\${shorten-url.expire-minutes}") private val expireMinutes: Long,
 ) {
 
-    @Scheduled(fixedRate = 1000 * 60)
+    @Scheduled(fixedRateString = "\${shorten-url.delete-expired-rate}")
     fun deleteExpiredShortenedUrl() {
         shortenedUrlRepository.deleteAllByExpiredAtBefore(LocalDateTime.now().minusMinutes(expireMinutes))
     }
