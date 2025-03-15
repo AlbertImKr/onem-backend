@@ -3,6 +3,7 @@ package community.whatever.onembackendkotlin.infra.repository
 import community.whatever.onembackendkotlin.domain.ShortenedUrl
 import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicLong
 
 @Repository
@@ -29,6 +30,10 @@ class ShortenedUrlInMemoryRepository : ShortenedUrlRepository {
 
     override fun deleteAll() {
         shortenUrls.clear()
+    }
+
+    override fun deleteAllByExpiredAtBefore(expiredAt: LocalDateTime) {
+        shortenUrls.values.removeIf { it.expiredAt.isBefore(expiredAt) }
     }
 
     private fun generateId(): String {

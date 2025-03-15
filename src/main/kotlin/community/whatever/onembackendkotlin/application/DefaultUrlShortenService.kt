@@ -10,6 +10,7 @@ import community.whatever.onembackendkotlin.application.exception.UrlNotFoundExc
 import community.whatever.onembackendkotlin.domain.ShortenedUrl
 import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class DefaultUrlShortenService(
@@ -29,7 +30,7 @@ class DefaultUrlShortenService(
         }
         shortenedUrlRepository.findByOriginUrl(originUrl)?.id
             ?.let { return ShortenedUrlResponse(it) }
-        return shortenedUrlRepository.save(ShortenedUrl(originUrl)).id
+        return shortenedUrlRepository.save(ShortenedUrl(originUrl, LocalDateTime.now())).id
             ?.let { ShortenedUrlResponse(it) }
             ?: throw UrlNotFoundException()
     }

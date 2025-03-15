@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 class DefaultUrlShortenServiceTest {
 
@@ -41,7 +42,7 @@ class DefaultUrlShortenServiceTest {
         @BeforeEach
         fun setUp() {
             originUrl = faker.internet().url()
-            shortenedUrl = ShortenedUrl(originUrl)
+            shortenedUrl = ShortenedUrl(originUrl, LocalDateTime.now())
         }
 
         @Test
@@ -86,7 +87,7 @@ class DefaultUrlShortenServiceTest {
         @BeforeEach
         fun setUp() {
             originUrl = faker.internet().url()
-            shortenedUrl = ShortenedUrl(originUrl)
+            shortenedUrl = ShortenedUrl(originUrl, LocalDateTime.now())
         }
 
         @Test

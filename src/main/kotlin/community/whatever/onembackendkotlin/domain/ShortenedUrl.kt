@@ -1,3 +1,9 @@
 package community.whatever.onembackendkotlin.domain
 
-data class ShortenedUrl(val originUrl: String, val id: String? = null)
+import java.time.LocalDateTime
+
+data class ShortenedUrl(
+    val originUrl: String,
+    val expiredAt: LocalDateTime,
+    val id: String? = null,
+)
