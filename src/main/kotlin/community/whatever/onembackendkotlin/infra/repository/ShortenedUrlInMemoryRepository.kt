@@ -33,7 +33,9 @@ class ShortenedUrlInMemoryRepository : ShortenedUrlRepository {
     }
 
     override fun deleteAllByExpiredAtBefore(baseTime: LocalDateTime) {
-        shortenUrls.values.removeIf { it.expiredAt.isBefore(baseTime) }
+        shortenUrls.replaceAll { _, url ->
+            url.takeUnless { it.expiredAt.isBefore(baseTime) } ?: url.copy(deleted = true)
+        }
     }
 
     private fun generateId(): String {
