@@ -2,15 +2,15 @@ package community.whatever.onembackendkotlin.infra.repository
 
 import community.whatever.onembackendkotlin.domain.ShortenedUrl
 import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicLong
 
 @Repository
-class ShortenedUrlInMemoryRepository(
-    @Value("\${shortened-url.key-prefix}") private val keyPrefix: String,
-) : ShortenedUrlRepository {
+class ShortenedUrlInMemoryRepository : ShortenedUrlRepository {
+
+    private val keyPrefix: String = System.getenv("spring.profiles.active") ?: "local"
+
     private val shortenUrls = mutableMapOf<String, ShortenedUrl>()
     private val seq: AtomicLong = AtomicLong()
 
