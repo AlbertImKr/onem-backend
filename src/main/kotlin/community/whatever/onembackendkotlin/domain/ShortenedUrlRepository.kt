@@ -1,5 +1,7 @@
 package community.whatever.onembackendkotlin.domain
 
+import java.time.LocalDateTime
+
 interface ShortenedUrlRepository {
     /**
      * 아이디를 통해 원본 URL을 찾는다.
@@ -37,4 +39,11 @@ interface ShortenedUrlRepository {
      * 모든 ShortenedUrl을 삭제한다.
      */
     fun deleteAll()
+
+    /**
+     * 만료일이 주어진 시간 이전인 ShortenedUrl을 모두 삭제한다.
+     *
+     * @param baseTime 기준 시간이다.
+     */
+    fun deleteAllByExpiredAtBefore(baseTime: LocalDateTime)
 }
