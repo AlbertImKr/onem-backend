@@ -32,8 +32,8 @@ class ShortenedUrlInMemoryRepository : ShortenedUrlRepository {
         shortenUrls.clear()
     }
 
-    override fun deleteAllByExpiredAtBefore(expiredAt: LocalDateTime) {
-        shortenUrls.values.removeIf { it.expiredAt.isBefore(expiredAt) }
+    override fun deleteAllByExpiredAtBefore(baseTime: LocalDateTime) {
+        shortenUrls.values.removeIf { it.expiredAt.isBefore(baseTime) }
     }
 
     private fun generateId(): String {

@@ -43,7 +43,7 @@ interface ShortenedUrlRepository {
     /**
      * 만료일이 주어진 시간 이전인 ShortenedUrl을 모두 삭제한다.
      *
-     * @param expiredAt 만료일이 주어진 시간이다.
+     * @param baseTime 기준 시간이다.
      */
-    fun deleteAllByExpiredAtBefore(expiredAt: LocalDateTime)
+    fun deleteAllByExpiredAtBefore(baseTime: LocalDateTime)
 }
