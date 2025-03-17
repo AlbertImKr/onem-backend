@@ -16,7 +16,7 @@ class ShortenedUrlInMemoryRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-        repository = ShortenedUrlInMemoryRepository()
+        repository = ShortenedUrlInMemoryRepository("test")
     }
 
     @DisplayName("아이디로 원본 URL을 찾기")
@@ -108,7 +108,23 @@ class ShortenedUrlInMemoryRepositoryTest {
             val exists = repository.existsByOriginUrl(nonExistentOriginUrl)
 
             // then
-            assertThat(!exists)
+            assertThat(exists).isFalse()
+        }
+
+        @Test
+        fun `삭제된 ShortenedUrl은 존재하지 않는 것으로 간주한다`() {
+            // given
+            val originUrl = faker.internet().url()
+            val baseTime = LocalDateTime.now()
+            val shortenedUrl = ShortenedUrl(originUrl, baseTime.minusMinutes(1))
+            repository.save(shortenedUrl)
+            repository.deleteAllByExpiredAtBefore(baseTime)
+
+            // when
+            val exists = repository.existsByOriginUrl(shortenedUrl.originUrl)
+
+            // then
+            assertThat(exists).isFalse()
         }
     }
 

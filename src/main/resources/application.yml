@@ -1,6 +1,8 @@
 spring:
   application:
     name: onem-backend-kotlin
+  profiles:
+    active: dev
 logging:
   level:
     root: INFO
@@ -17,3 +19,34 @@ logging:
 shorten-url:
   expire-minutes: 1
   delete-expired-rate: 30_000 # 30 초 (밀리초 단위)
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+
+shortened-url:
+  key-prefix: "dev"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: stg
+
+shortened-url:
+  key-prefix: "stg"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prd
+
+shortened-url:
+  key-prefix: "prd"

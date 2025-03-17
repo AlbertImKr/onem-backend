@@ -2,12 +2,15 @@ package community.whatever.onembackendkotlin.infra.repository
 
 import community.whatever.onembackendkotlin.domain.ShortenedUrl
 import community.whatever.onembackendkotlin.domain.ShortenedUrlRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicLong
 
 @Repository
-class ShortenedUrlInMemoryRepository : ShortenedUrlRepository {
+class ShortenedUrlInMemoryRepository(
+    @Value("\${shortened-url.key-prefix}") private val keyPrefix: String,
+) : ShortenedUrlRepository {
     private val shortenUrls = mutableMapOf<String, ShortenedUrl>()
     private val seq: AtomicLong = AtomicLong()
 
@@ -21,7 +24,7 @@ class ShortenedUrlInMemoryRepository : ShortenedUrlRepository {
     }
 
     override fun existsByOriginUrl(originUrl: String): Boolean {
-        return shortenUrls.values.any { it.originUrl == originUrl }
+        return shortenUrls.values.any { it.originUrl == originUrl && !it.deleted }
     }
 
     override fun findByOriginUrl(originUrl: String): ShortenedUrl? {
@@ -39,6 +42,6 @@ class ShortenedUrlInMemoryRepository : ShortenedUrlRepository {
     }
 
     private fun generateId(): String {
-        return seq.incrementAndGet().toString()
+        return keyPrefix + seq.incrementAndGet()
     }
 }

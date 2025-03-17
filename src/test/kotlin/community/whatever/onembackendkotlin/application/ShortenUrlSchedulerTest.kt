@@ -20,7 +20,7 @@ class ShortenUrlSchedulerTest {
 
     @BeforeEach
     fun setUp() {
-        shortenedUrlRepository = ShortenedUrlInMemoryRepository()
+        shortenedUrlRepository = ShortenedUrlInMemoryRepository("test")
         shortenUrlScheduler = ShortenUrlScheduler(shortenedUrlRepository, expireMinutes)
     }
 
