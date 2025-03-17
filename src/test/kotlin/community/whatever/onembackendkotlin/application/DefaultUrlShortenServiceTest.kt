@@ -27,7 +27,7 @@ class DefaultUrlShortenServiceTest {
 
     @BeforeEach
     fun setUp() {
-        shortenedUrlRepository = ShortenedUrlInMemoryRepository()
+        shortenedUrlRepository = ShortenedUrlInMemoryRepository("test")
         blockedDomainService = DefaultBlockedDomainService(BlockedDomainInMemoryRepository())
         urlShortenService = DefaultUrlShortenService(shortenedUrlRepository, blockedDomainService)
     }
