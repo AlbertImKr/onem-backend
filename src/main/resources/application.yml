@@ -3,6 +3,8 @@ spring:
     name: onem-backend-kotlin
   profiles:
     active: dev
+
+# 로그 설정 (Logs)
 logging:
   level:
     root: INFO
@@ -16,9 +18,47 @@ logging:
       max-history: 30
       max-file-size: 10MB
       file-name-pattern: "logs/onem-backend-kotlin-%d{yyyy-MM-dd}.%i.log"
+  # tracing Id, span Id 를 로그에 출력 (Grafana Loki와 통합)
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
 shorten-url:
   expire-minutes: 1
   delete-expired-rate: 30_000 # 30 초 (밀리초 단위)
+
+
+management:
+  # Tracing 설정
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0 # 100% 샘플링 (즉 모든 요청에 대해 추적)
+  # Prometheus 엔드포인트 노출 설정
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  # Metrics 설정
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+    tags:
+      application: ${spring.application.name}
+  # Prometheus 설정 - 메트릭 내보내기
+  prometheus:
+    metrics:
+      export:
+        enabled: true # Prometheus에 메트릭 내보내기 활성화
+  endpoint:
+    prometheus:
+      access: read_only # Prometheus에 대한 읽기 전용 액세스
 
 ---
 
@@ -27,10 +67,6 @@ spring:
     activate:
       on-profile: dev
 
-
-shortened-url:
-  key-prefix: "dev"
-
 ---
 
 spring:
@@ -38,15 +74,9 @@ spring:
     activate:
       on-profile: stg
 
-shortened-url:
-  key-prefix: "stg"
-
 ---
 
 spring:
   config:
     activate:
       on-profile: prd
-
-shortened-url:
-  key-prefix: "prd"
