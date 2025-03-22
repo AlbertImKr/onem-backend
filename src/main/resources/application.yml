@@ -37,11 +37,6 @@ management:
   tracing:
     sampling:
       probability: 1.0 # 100% 샘플링 (즉 모든 요청에 대해 추적)
-    propagation:
-      type: w3c # W3C 표준 헤더 사용
-    baggage:
-      correlation:
-        enabled: true # 분산 추적을 위한 상관관계 ID 사용
   # Prometheus 엔드포인트 노출 설정
   endpoints:
     web:

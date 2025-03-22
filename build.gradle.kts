@@ -46,8 +46,6 @@ dependencies {
     implementation("com.github.loki4j:loki-logback-appender:$loki4jVersion")
     // Micrometer와 OpenTelemetry를 연동하여 분산 추적을 수집하는 라이브러리입니다.
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
-    // Zipkin과 OpenTelemetry를 연동하여 추적 데이터를 전송하는 라이브러리입니다.
-    implementation("io.zipkin.contrib.otel:encoder-brave:$zipkin")
     // OpenTelemetry를 OTLP(직접 전송 프로토콜)로 연동하기 위한 라이브러리입니다.
     implementation("io.micrometer:micrometer-registry-otlp")
     // OpenTelemetry의 BOM을 설정하여 관련 의존성을 관리할 수 있게 해주는 라이브러리입니다.
