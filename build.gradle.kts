@@ -13,6 +13,9 @@ val awaitilityVersion = "4.2.0"
 val mockkVersion = "1.13.17"
 val restAssuredVersion = "5.5.0"
 val datafakerVersion = "2.4.2"
+val loki4jVersion = "1.6.0"
+val zipkin = "0.2.0"
+val opentelemetry = "1.48.0"
 
 java {
     toolchain {
@@ -32,6 +35,31 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+    // Spring Boot Actuator는 애플리케이션의 상태를 모니터링하기 위한 라이브러리입니다.
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    // Micrometer는 애플리케이션의 성능 지표를 수집하고 모니터링하는 라이브러리입니다.
+    implementation("io.micrometer:micrometer-core")
+    // Prometheus에 지표를 수집하여 저장할 수 있게 해주는 Micrometer의 레지스트리 라이브러리입니다.
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    // Loki에 로그를 전송하기 위한 Logback Appender 라이브러리입니다.
+    implementation("com.github.loki4j:loki-logback-appender:$loki4jVersion")
+    // Micrometer와 OpenTelemetry를 연동하여 분산 추적을 수집하는 라이브러리입니다.
+    implementation("io.micrometer:micrometer-tracing-bridge-otel")
+    // Zipkin과 OpenTelemetry를 연동하여 추적 데이터를 전송하는 라이브러리입니다.
+    implementation("io.zipkin.contrib.otel:encoder-brave:$zipkin")
+    // OpenTelemetry를 OTLP(직접 전송 프로토콜)로 연동하기 위한 라이브러리입니다.
+    implementation("io.micrometer:micrometer-registry-otlp")
+    // OpenTelemetry의 BOM을 설정하여 관련 의존성을 관리할 수 있게 해주는 라이브러리입니다.
+    implementation(platform("io.opentelemetry:opentelemetry-bom:$opentelemetry"))
+    // OpenTelemetry API를 제공하는 라이브러리입니다.
+    implementation("io.opentelemetry:opentelemetry-api")
+    // OpenTelemetry SDK를 제공하여 추적 및 지표를 관리하는 라이브러리입니다.
+    implementation("io.opentelemetry:opentelemetry-sdk")
+    // OpenTelemetry OTLP exporter를 사용하여 OTLP로 데이터를 전송하는 라이브러리입니다.
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp")
+
+
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
